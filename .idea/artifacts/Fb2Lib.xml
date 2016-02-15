@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="Fb2Lib">
+    <output-path>$PROJECT_DIR$/out/artifacts/Fb2Lib</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="ru.fb2lib.MainWindow" />
+        <option name="description" value="" />
+        <option name="htmlParamFile" value="" />
+        <option name="paramFile" value="" />
+        <option name="title" value="FictionBook Library" />
+        <option name="vendor" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="Fb2Lib.jar">
+        <element id="module-output" name="Fb2Lib" />
+      </element>
+    </root>
+  </artifact>
+</component>

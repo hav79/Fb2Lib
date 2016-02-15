@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jfxrt">
+    <CLASSES>
+      <root url="jar:///usr/lib/jvm/java-8-oracle/jre/lib/ext/jfxrt.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar:///usr/lib/jvm/java-8-oracle/javafx-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>
