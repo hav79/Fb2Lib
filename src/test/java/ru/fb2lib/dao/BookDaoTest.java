@@ -21,10 +21,7 @@ public class BookDaoTest {
     public static void init() {
         HibernateUtil.setTestEntityManagerFactory();
         entityManager = HibernateUtil.createEntityManager();
-    }
 
-    @Before
-    public void setUp() throws Exception {
         entityManager.getTransaction().begin();
         List<Person> authors = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -44,8 +41,8 @@ public class BookDaoTest {
             Sequence sequence2 = new Sequence("Test sequence 1");
             entityManager.persist(sequence1);
             entityManager.persist(sequence2);
-            book.addSequence(sequence1, Long.valueOf(1));
-            book.addSequence(sequence2, Long.valueOf(2));
+            book.addSequence(sequence1, 1L);
+            book.addSequence(sequence2, 2L);
         }
         entityManager.getTransaction().commit();
     }
@@ -90,7 +87,7 @@ public class BookDaoTest {
         entityManager.getTransaction().begin();
         entityManager.persist(book);
         entityManager.getTransaction().commit();
-        getBookDao().addSequence(book.getId(), new Sequence("Test sequence 3"), Long.valueOf(3));
+        getBookDao().addSequence(book.getId(), new Sequence("Test sequence 3"), 3L);
         entityManager.refresh(book);
         Assert.assertEquals(1, book.getSequences().size());
     }

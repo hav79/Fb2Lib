@@ -1,16 +1,19 @@
 package ru.fb2lib.dao.impl;
 
+import org.hibernate.Hibernate;
 import ru.fb2lib.dao.PersonDao;
 import ru.fb2lib.datasets.Book;
 import ru.fb2lib.datasets.Person;
 import ru.fb2lib.datasets.Person_;
-import ru.fb2lib.db.HibernateUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static ru.fb2lib.db.HibernateUtil.createEntityManager;
 
 /**
  * Created by hav on 05.01.16.
@@ -22,7 +25,7 @@ public class PersonDaoImpl implements PersonDao {
 
     @Override
     public Person getPerson(long id) {
-        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityManager em = createEntityManager();
         Person res = em.find(Person.class, id);
         em.close();
         return res;
@@ -31,7 +34,7 @@ public class PersonDaoImpl implements PersonDao {
     @Override
     public Person getPerson(String name, String middleName, String lastName) {
         Person res = null;
-        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityManager em = createEntityManager();
         CriteriaQuery<Person> criteria = em.getCriteriaBuilder().createQuery(Person.class);
         Root<Person> personRoot = criteria.from(Person.class);
         criteria.select(personRoot);
@@ -48,7 +51,7 @@ public class PersonDaoImpl implements PersonDao {
 
     @Override
     public Person insertPerson(Person person) {
-        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityManager em = createEntityManager();
         em.getTransaction().begin();
         Person personInDb = getPerson(person.getFirstName(), person.getMiddleName(), person.getLastName());
         if (personInDb == null)
@@ -63,7 +66,7 @@ public class PersonDaoImpl implements PersonDao {
     @Override
     public List<Person> getAllPersons() {
         List<Person> res;
-        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityManager em = createEntityManager();
         CriteriaQuery<Person> criteria = em.getCriteriaBuilder().createQuery(Person.class);
         Root<Person> personRoot = criteria.from(Person.class);
         criteria.select(personRoot);
@@ -74,17 +77,26 @@ public class PersonDaoImpl implements PersonDao {
 
     @Override
     public List<Person> getAllAuthors() {
-        List<Person> allPersons = getAllPersons();
         List<Person> authors = new ArrayList<>();
-        for (Person p : allPersons) {
-            if (!p.getBooksWrited().isEmpty())
-                authors.add(p);
-        }
+        EntityManager em = createEntityManager();
+        CriteriaQuery<Person> criteria = em.getCriteriaBuilder().createQuery(Person.class);
+        Root<Person> personRoot = criteria.from(Person.class);
+        criteria.select(personRoot);
+        criteria.where(em.getCriteriaBuilder().isNotEmpty(personRoot.get(Person_.booksWrited)));
+        authors.addAll(em.createQuery(criteria).getResultList());
+        authors.forEach(Hibernate::initialize);
+        em.close();
         return authors;
     }
 
     @Override
     public List<Book> getBooksOfAuthor(long id) {
-        return new ArrayList<>(getPerson(id).getBooksWrited());
+        EntityManager em = createEntityManager();
+        Person author = em.find(Person.class, id);
+        Hibernate.initialize(author.getBooksWrited());
+        Set<Book> books = author.getBooksWrited();
+        em.close();
+        //TODO list or set?
+        return new ArrayList<>(books);
     }
 }
