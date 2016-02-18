@@ -1,8 +1,6 @@
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import ru.fb2lib.dao.BookDaoTest;
-import ru.fb2lib.dao.EditionDaoTest;
-import ru.fb2lib.dao.PersonDaoTest;
+import ru.fb2lib.dao.*;
 
 /**
  * Created by hav on 15.02.16.
@@ -12,7 +10,8 @@ import ru.fb2lib.dao.PersonDaoTest;
 @Suite.SuiteClasses({
         BookDaoTest.class,
         PersonDaoTest.class,
-        EditionDaoTest.class
+        EditionDaoTest.class,
+        DocumentDaoTest.class
 })
 public class DaoTestSuite {
     // the class remains empty,
