@@ -74,10 +74,17 @@ public class BookDaoTest {
 
     @Test
     public void testInsertBook() throws Exception {
+        // Add new book
         Book book = new Book();
         book.setTitle("Test book");
         getBookDao().insertBook(book);
         Assert.assertNotNull(book.getId());
+
+        // Add already existing book
+        book = new Book();
+        book.setTitle("Test title 0");
+        book = getBookDao().insertBook(book);
+        Assert.assertEquals(1, book.getId().longValue());
     }
 
     @Test

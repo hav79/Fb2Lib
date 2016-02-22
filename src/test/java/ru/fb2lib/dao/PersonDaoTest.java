@@ -72,8 +72,13 @@ public class PersonDaoTest {
 
     @Test
     public void testInsertPerson() throws Exception {
+        // Add new person
         Person person = new Person("Petr", "Petrovich", "Petrov");
         getPersonDao().insertPerson(person);
         Assert.assertNotNull(person.getId());
+
+        // Add already existing person
+        person = getPersonDao().insertPerson(new Person("Ivan" + 0, "Ivanovich" + 0, "Ivanov" + 0));
+        Assert.assertEquals(1, person.getId().longValue());
     }
 }

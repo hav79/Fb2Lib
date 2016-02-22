@@ -11,7 +11,9 @@ import ru.fb2lib.dao.*;
         BookDaoTest.class,
         PersonDaoTest.class,
         EditionDaoTest.class,
-        DocumentDaoTest.class
+        DocumentDaoTest.class,
+        SequenceDaoTest.class,
+        CoverDaoTest.class
 })
 public class DaoTestSuite {
     // the class remains empty,

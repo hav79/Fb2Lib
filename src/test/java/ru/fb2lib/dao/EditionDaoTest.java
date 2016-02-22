@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.fb2lib.dao.DaoFactory.getEditionDao;
+
 /**
  * Created by hav on 15.02.16.
  */
@@ -46,29 +48,36 @@ public class EditionDaoTest {
 
     @Test
     public void testGetEditionById() throws Exception {
-        Edition edition = DaoFactory.getEditionDao().getEdition(1);
+        Edition edition = getEditionDao().getEdition(1);
         Assert.assertNotNull(edition);
     }
 
     @Test
     public void testGetEditionByIsbn() throws Exception {
-        Edition edition = DaoFactory.getEditionDao().getEdition("5-04-003603-50");
+        Edition edition = getEditionDao().getEdition("5-04-003603-50");
         Assert.assertNotNull(edition);
     }
 
     @Test
     public void testGetBooksFromEdition() throws Exception {
-        List<Book> books = DaoFactory.getEditionDao().getBooksFromEdition(1);
+        List<Book> books = getEditionDao().getBooksFromEdition(1);
         Assert.assertEquals(2, books.size());
-        books = DaoFactory.getEditionDao().getBooksFromEdition(3);
+        books = getEditionDao().getBooksFromEdition(3);
         Assert.assertEquals(0, books.size());
     }
 
     @Test
     public void testInsertEdition() throws Exception {
+        // Add new edition
         Edition edition = new Edition();
         edition.setIsbn("5-04-003603-555");
-        DaoFactory.getEditionDao().insertEdition(edition);
+        getEditionDao().insertEdition(edition);
         Assert.assertNotNull(edition.getId());
+
+        // Add already existing edition
+        edition = new Edition();
+        edition.setIsbn("5-04-003603-50");
+        edition = getEditionDao().insertEdition(edition);
+        Assert.assertEquals(1, edition.getId().longValue());
     }
 }

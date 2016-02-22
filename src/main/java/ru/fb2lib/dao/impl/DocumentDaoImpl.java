@@ -3,11 +3,12 @@ package ru.fb2lib.dao.impl;
 import ru.fb2lib.dao.DocumentDao;
 import ru.fb2lib.datasets.Document;
 import ru.fb2lib.datasets.Document_;
-import ru.fb2lib.db.HibernateUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import static ru.fb2lib.db.HibernateUtil.createEntityManager;
 
 /**
  * Created by hav on 03.02.16.
@@ -19,7 +20,7 @@ public class DocumentDaoImpl implements DocumentDao {
 
     @Override
     public Document getDocument(long id) {
-        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityManager em = createEntityManager();
         Document res = em.find(Document.class, id);
         em.close();
         return res;
@@ -28,7 +29,7 @@ public class DocumentDaoImpl implements DocumentDao {
     @Override
     public Document getDocument(String docId) {
         Document res = null;
-        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityManager em = createEntityManager();
         CriteriaQuery<Document> criteria = em.getCriteriaBuilder().createQuery(Document.class);
         Root<Document> documentRoot = criteria.from(Document.class);
         criteria.select(documentRoot);
@@ -41,9 +42,15 @@ public class DocumentDaoImpl implements DocumentDao {
 
     @Override
     public Document insertDocument(Document document) {
-        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        if (document.getDocumentId().equals(""))
+            return null;
+        EntityManager em = createEntityManager();
         em.getTransaction().begin();
-        em.persist(document);
+        Document docInDb = getDocument(document.getDocumentId());
+        if (docInDb == null)
+            em.persist(document);
+        else
+            document = docInDb;
         em.getTransaction().commit();
         em.close();
         return document;

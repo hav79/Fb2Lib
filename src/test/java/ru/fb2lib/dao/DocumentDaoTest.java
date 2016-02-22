@@ -47,9 +47,16 @@ public class DocumentDaoTest {
 
     @Test
     public void testInsertDocument() throws Exception {
+        // Add new document
         Document document = new Document();
         document.setDocumentId("FE436341-545C-428F-AB62-04B8729797E4");
         getDocumentDao().insertDocument(document);
         Assert.assertNotNull(document.getId());
+
+        // Add already existing document
+        document = new Document();
+        document.setDocumentId("13D1B680-685A-49C1-9FDA-A69EE7DEE529");
+        document = getDocumentDao().insertDocument(document);
+        Assert.assertEquals(1, document.getId().longValue());
     }
 }
