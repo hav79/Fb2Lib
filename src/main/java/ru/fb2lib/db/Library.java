@@ -4,7 +4,6 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import ru.fb2lib.dao.DaoFactory;
 import ru.fb2lib.datasets.*;
 import ru.fb2lib.parser.Fb2Parser;
 import ru.fb2lib.parser.Parser;
@@ -13,6 +12,8 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static ru.fb2lib.dao.DaoFactory.*;
 
 /**
  * Created by hav on 05.01.16.
@@ -33,16 +34,13 @@ public class Library implements Observable {
 
     public long addPerson(String name, String middleName, String lastName) {
         log.info("Add person: " + name + " " + middleName + "" + lastName);
-        Long id = DaoFactory
-                .getInstance()
-                .getPersonDao()
-                .insertPerson(new Person(name, middleName, lastName)).getId();
+        Long id = getPersonDao().insertPerson(new Person(name, middleName, lastName)).getId();
         notifyObservers();
         return id;
     }
 
     public Person getPerson(long id) {
-        return DaoFactory.getInstance().getPersonDao().getPerson(id);
+        return getPersonDao().getPerson(id);
     }
 
     public long addBookFromFile(String filename) {
@@ -52,7 +50,7 @@ public class Library implements Observable {
         try {
             book.setGenres(parser.parseGenres());
             for (Person p: parser.parseAuthors()) {
-                Person inDb = DaoFactory.getInstance().getPersonDao().insertPerson(p);
+                Person inDb = getPersonDao().insertPerson(p);
                 book.addAuthor(inDb);
                 if (!authors.contains(inDb))
 //                    authors.retainAll(inDb);
@@ -64,39 +62,39 @@ public class Library implements Observable {
             book.setLang(parser.parseLang());
             book.setSrcLang(parser.parseSrcLang());
             for (Person p : parser.parseTranslators())
-                book.addTranslator(DaoFactory.getInstance().getPersonDao().insertPerson(p));
+                book.addTranslator(getPersonDao().insertPerson(p));
             for (BookSequences bs : parser.parseSequences())
-                book.addSequence(DaoFactory.getInstance().getSequenceDao().insertSequence(bs.getSequence()),
+                book.addSequence(getSequenceDao().insertSequence(bs.getSequence()),
                         bs.getNumber());
             book.setKeywords(parser.parseKeywords());
             book.setAnnotation(parser.parseAnnotation());
-            book.setCover(DaoFactory.getInstance().getCoverDao().insertCover(parser.parseCover()));
+            book.setCover(getCoverDao().insertCover(parser.parseCover()));
 //            book.setSrcCover(DaoFactory.getInstance().getCoverDao().insertCover(parser.parseSrcCover()));
             
             Document doc = parser.parseDocumentInfo();
             for (Person p : parser.parseDocAuthors()) {
-                doc.addAuthor(DaoFactory.getInstance().getPersonDao().insertPerson(p));
+                doc.addAuthor(getPersonDao().insertPerson(p));
             }
-            book.setDocument(DaoFactory.getInstance().getDocumentDao().insertDocument(doc));
+            book.setDocument(getDocumentDao().insertDocument(doc));
 
             Edition edition = parser.parseEdition();
-            book.setEdition(DaoFactory.getInstance().getEditionDao().insertEdition(edition));
+            book.setEdition(getEditionDao().insertEdition(edition));
         } catch (XPathExpressionException e) {
             e.printStackTrace();
         }
 
-        Long bookId = DaoFactory.getInstance().getBookDao().insertBook(book).getId();
+        Long bookId = getBookDao().insertBook(book).getId();
 
         notifyObservers();
         return bookId;
     }
 
     public Book getBook(long id) {
-        return DaoFactory.getInstance().getBookDao().getBook(id);
+        return getBookDao().getBook(id);
     }
 
     public List<Person> getAllPersons() {
-        return DaoFactory.getInstance().getPersonDao().getAllPersons();
+        return getPersonDao().getAllPersons();
     }
 
     public ObservableList<Person> getAuthors() {
@@ -108,27 +106,27 @@ public class Library implements Observable {
 //    }
 
     public List<Book> getAllBooks() {
-        return DaoFactory.getInstance().getBookDao().getAllBooks();
+        return getBookDao().getAllBooks();
     }
 
     public List<Person> getAllAuthors() {
-        return DaoFactory.getInstance().getPersonDao().getAllAuthors();
+        return getPersonDao().getAllAuthors();
     }
 
     public List<Book> getBooksOfAuthor(long id) {
-        return DaoFactory.getInstance().getPersonDao().getBooksOfAuthor(id);
+        return getPersonDao().getBooksOfAuthor(id);
     }
 
     public List<Person> getAuthorsOfBook(long id) {
-        return DaoFactory.getInstance().getBookDao().getAuthorsOfBook(id);
+        return getBookDao().getAuthorsOfBook(id);
     }
 
     public List<Genre> getGenresOfBook(long id) {
-        return DaoFactory.getInstance().getBookDao().getGenresOfBook(id);
+        return getBookDao().getGenresOfBook(id);
     }
 
     public List<BookSequences> getSequencesOfBook(long id) {
-        return DaoFactory.getInstance().getBookDao().getSequencesOfBook(id);
+        return getBookDao().getSequencesOfBook(id);
     }
 
 //    public List<Person> getAddedPersons() {
